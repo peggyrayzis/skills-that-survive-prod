@@ -4,19 +4,22 @@ notes: Who here has created an agent skill? Keep your hand raised if you use the
 
 # Skills That Survive Production
 
-Good skill = judgment + contract
+Good output = judgment + contract
 
 ---
 
 <!--
-notes: My name is Peggy, I'm an engineer turned marketer who has been working with founders at Render, Imbue, LiveKit, and InsForge on some of their biggest launches through my business scale.dev. You may also recognize me from Apollo GraphQL where I was an engineer and led dev marketing for 7 years. Where are all my Jersey City/Hoboken people at? And now I'm building Kite, which I like to describe as either agent-native Marketo. And if you haven't felt the pain of Marketo, you can also think of Kite as an OpenClaw for marketing.
+layout: intro-photo
+notes: My name is Peggy. I am an engineer turned marketer, and I have worked with founders at companies like Render, Imbue, LiveKit, and InsForge on launches and early GTM. Before scale.dev, I was at Apollo GraphQL for 7 years. A lot of this talk comes from manually building the same workflows over and over again, first as services, and now in my marketing agent Kite.
 -->
 
 # @peggyrayzis
 
-- scale.dev: Engineer turned marketer doing launches for devtools/AI
-- Live in Jersey City 💛
+- scale.dev: Engineer turned marketer shipping launches for devtools/AI founders
+- Live in Jersey City with my dog Simba
 - Building Kite, a marketing agent that runs on skills
+
+![Peggy Rayzis](assets/peggy-intro.webp)
 
 ---
 
@@ -26,7 +29,9 @@ notes: When skills came out, I was hooked. For me, it kind of felt like the firs
 I went down the rabbit hole with Pi, which is a minimal agent harness you can customize with skills. I packaged all of my positioning, lead scoring, and launch workflows into skills, then I turned them into a background agent with Pi. Now it's in production with a few of my seed stage clients! All of this truly opened my mind to what's possible with skills, and even though the AI world moves fast, I think they're an important foundation for how we'll make agents actually useful.
 -->
 
-# Skills are the next application paradigm
+# Skills gave me a shape for repeatable judgment
+
+Finally, a way to package how I work.
 
 ---
 
@@ -38,113 +43,139 @@ notes: First I want to give a quick refresher on what agent skills are. They're 
 Skills are progressively disclosed which means they're only loaded into context when you invoke them with a slash command or the model decides to invoke them after matching your intent to the description field in the skill.
 -->
 
-# Skills: Reusable instructions, progressive disclosure
+# Skills
 
-## Give the model your taste and judgment!
+- Reusable instructions
+- Progressive disclosure
+- Taste and judgment for the model
+
+---
 
 <!--
 eyebrow: Skills 101
-notes: This distinction between user and model-invoked skills is actually quite important
+layout: continuum
+notes: Most skills you see people sharing today are user-invoked. They might use them only a few times a week, so maybe it's not as important that they're tested and reliable. A few harness-specific skills you may have tried are
 -->
 
 # User vs. model-invoked skills
 
-- Most skills are intended to be user-invoked (ex: /plan, /frontend-design)
-- Some are both (/goal, /compact)
-- Writing good model-invoked skills is hard
+- **User-invoked** `/plan`
+- **Mostly user-invoked** `/goal`
+- **Mostly model-invoked** `/compact`
+- **Fully model-invoked** `today's talk`
 
 ---
 
 <!--
 tone: green
-notes: blah
+layout: split-list
+notes: I do not want to overclaim the component analogy, but it helps people understand the direction. Skills are becoming reusable pieces of agent behavior that teams can own, version, compose, and improve.
 -->
 
-# Skills as components
+# Skills <> Components
 
-- Flue (creators of Astro): https://flueframework.com/
-- Eve (Vercel): https://eve.dev/
+- Reusable
+- Composable
+- Shared across teams
+- Portable across agents
 
 ---
 
 <!--
-eyebrow: Before
-notes: I'm going to talk about lead scoring because that's my domain but you could apply these principles to other domains: issue triage skill for OSS project, customer service ticket triage, anywhere you need a queue of prioritized outputs.
+eyebrow: Pattern
+layout: contract-sandwich
+notes: This is the portable shape. The domain can be lead qualification, incident response, customer escalation, or code review. The shared thing is a queue where the agent needs to make a judgment and return something structured.
 -->
 
 # The skill sandwich
 
-## Structured Evidence -> Judgment (what makes a good lead?) -> Structured Output
+- **Inputs** Evidence the agent can cite
+- **Judgment** The call it makes
+- **Output** Contract another system can trust
+
+![Annotated pastrami sandwich](assets/pastrami-sandwich-cutout.png)
 
 ---
 
 <!--
-eyebrow: Before
-notes: I'm going to talk about lead scoring because that's my domain but you could apply these principles to other domains: issue triage skill for OSS project, customer service ticket triage, anywhere you need a queue of prioritized outputs.
+eyebrow: Pattern
+layout: contract
+notes: Lead qualification is my concrete example because this is the workflow I have actually run at scale. I should be explicit that the pattern is not lead-specific.
 -->
 
-# ICP skill
+# Lead qualification
 
-## LinkedIn, company data, product signals -> Eval (Account, Person) -> Fit + Reasons + Confidence
+- **Inputs** Social, product, company signals
+- **Judgment** Fit, exclusion, confidence
+- **Output** Evidence + next step
 
 ---
 
 <!--
-eyebrow: Before
-notes: I'm going to talk about lead scoring because that's my domain but you could apply these principles to other domains: issue triage skill for OSS project, customer service ticket triage, anywhere you need a queue of prioritized outputs.
+eyebrow: Pattern
+layout: contract
+notes: You can abstract this pattern to many other types of skills that require judgment to product a priority queue, like incident triage.
 -->
 
-# Issue triage skill
+# Incident triage
 
-## Issue, codebase, maintainers -> Eval (Issue, Maintainers) -> Owner + Reasons + Confidence
+- **Inputs** Alert, logs, runbook, ownership
+- **Judgment** Severity, blast radius, owner
+- **Output** Route + next step
 
 ---
 
 <!--
-eyebrow: Before
-notes: I'm going to talk about lead scoring because that's my domain but you could apply these principles to other domains: issue triage skill for OSS project, support ticket skill, anywhere you need a queue of prioritized outputs. (Fix the examples so they're more legible)
+eyebrow: Pattern
+layout: contract
+notes: Customer escalation is another one. Tickets and account context in -> Policy and judgment on urgency -> Route it to the next layer in your system
 -->
 
-# Support ticket skill
+# Customer escalation
 
-## Ticket, customer -> Eval (Ticket) -> Priority + Reasons + Confidence
+- **Inputs** Ticket, account, history
+- **Judgment** Urgency, risk, missing info
+- **Output** Route + next step
 
 ---
 
 <!--
 tone: blue
 eyebrow: What not to do
+layout: clay-artifact
 notes: Most of the skills you see are actually big giant prompts. Before my marketing agent was a thing, I built lead scoring for my clients in Clay. There would be weird edge cases and questions from clients about why this lead that I couldn't always answer because the prompt had a lot of branching logic in prose that was impossible to test.
 -->
 
 # Skillslop
 
-2000+ line markdown files
+2,000+ line SKILL.md is just a giant prompt
+
+![Redacted Clay lead classification table](assets/kite-ui-dump-redacted.png)
 
 ---
 
 <!--
 tone: green
-eyebrow: Skills Best Practices
-notes:
+eyebrow: Best Practices
+notes: First you want to break your skills into sub-workflows. For lead scoring, maybe you have one for handling exclusions. Or maybe in the case of a bug report, you have different policies for handling bugs from contributors vs. users. Whatever it is, you'll want to keep your SKILL.md short and link out to reference documentation or example schemas in references/.
 -->
 
-# De-slop your skills
+# 1. De-slop your skills
 
-- Keep SKILL.md thin (<500 lines), use context pointers to:
-  - references/: Additional docs or grounding examples, loaded on demand
-  - assets/: Templates and images not loaded into context
-  - scripts/: Executable scripts
-  - evals/: Test cases
+- `SKILL.md`: trigger + routing
+- `references/`: specs and examples
+- `scripts/`: deterministic checks
+- `evals/`: cases that should not regress
 
 ---
 
 <!--
-eyebrow: Skills Best Practices
+eyebrow: Best Practices
+layout: code
 notes: This skill runs on 100,000 records a week, so the output must be consistent. I like grading high, med, low over a numerical score. Codex will give you skills closer to this style than Claude.
 -->
 
-# Output schemas
+# 2. Use output schemas
 
 ```json
 "outputs": {
@@ -165,154 +196,120 @@ notes: This skill runs on 100,000 records a week, so the output must be consiste
 
 ---
 
-# JTBD as descriptions
+<!--
+eyebrow: Best Practices
+layout: code
+notes: Each skill's description is loaded into context and the model uses that to decide when to invoke it. I like to use "JTBD" verbs and talk about when to run the skill, like before sending Slack alerts or exporting to a CRM. There's also a Slack bot component of my agent, I had to do a bit of work testing different descriptions and mapping those to user intent in order to get them to trigger reliably.
+-->
 
-# Before
+# 3. Use verbs in trigger descriptions
 
+```md
+Bad:
 description: ICP fit skill for people and accounts
 
-# After
-
-description: >
-Score leads, answer ICP questions, decide account fit or person fit, check account or person exclusions, and find ICP examples. Use this skill when the user has a CSV, JSON file, or a list of enriched leads or companies that they want to score and prioritize before sending campaigns, outbound messages, Slack alerts, or exporting to their CRM.
+Better:
+description: Score enriched leads, check fit and exclusions,
+and prioritize before outbound, Slack alerts, or CRM export.
+```
 
 ---
 
 <!--
 tone: blue
 eyebrow: Testing skills
-notes: Here's how to test skills
+notes: Start small, you can get pretty far with 5 evals to start.
 -->
 
-# Evals = reliable skills
+# Evals make skills real
 
-- Trigger evals: Did the model invoke my skill?
-- Output evals: Is it in the shape I expect?
-- Token cost
-- 3-5 quality validators
+- Trigger: did the model invoke the skill?
+- Shape: can code parse the output?
+- Judgment: does it match hand review?
+- Cost: did we load too much context?
 
 ---
 
 <!--
-eyebrow: The comparison
-notes: This slide makes the contrast clear. The three columns should be the whole demo structure: bad/common shape, production shape, human baseline.
+tone: blue
+eyebrow: Testing skills
+notes: Quality validators are the bridge from abstract evals to the demo. Keep them specific, boring, and testable. Did the skill respect my exclusion? If there is a next action like adding to an outbound campaign, was it blocked for tier 0 leads? Were leads with missing evidence handled as low confidence?
 -->
 
-# Attendee triage, three ways
+# Start with 3-5 boring quality validators
 
-- Big skill: one giant Markdown file
-- Split skill: thin skill, spec, schema, checks
-- Hand review: what I wanted the agent to do
+- Evidence required
+- Low confidence handled
+- Exclusions respected
+- Unsafe actions blocked
+
+---
+
+<!--
+eyebrow: Testing skills
+notes: I ran a little experiment using our attendee list for this meetup and an adapted version of my lead scoring skill for Kite. First, a big skill with 1000+ lines, then a slim "sandwich" skill with a ICP spec, a schema, and checks.
+-->
+
+# Triaging meetup attendees
+
+- Big skill: one giant SKILL.md
+- Thin skill: context pointers, schema, checks
 
 ---
 
 <!--
 tone: green
 eyebrow: Benchmark
-notes: This can be a real terminal output later. For now these are placeholder numbers. The dimensions are what matter: not model intelligence, but shape, evidence, uncertainty, unsafe actions.
+layout: benchmark
+notes: This is the first half of the production question: not whether the model can produce a plausible answer once, but how the distribution changes when the skill has less prose and a clearer contract. Generally I want fewer leads scored
 -->
 
 # What survives production?
 
 ```text
-Eval dimension          Big skill   Split skill
-Schema valid            74%         100%
-Evidence present        61%         96%
-Uncertainty handled     52%         91%
-Unsafe action blocked   3           0
-```
-
----
-
-<!--
-eyebrow: The interesting failure
-notes: This is the case study moment. Pick one failure where the big skill sounds reasonable but is unsafe. The split skill is not smarter, it stops better.
--->
-
-# The big skill guessed.
-
-The production-shaped skill said: enrich more.
-
----
-
-<!--
-tone: blue
-eyebrow: Output shape
-notes: This should show the boring structured JSON. Boring is the point. Another system can trust it.
--->
-
-# The system needs a receipt.
-
-```json
-{
-  "segment": "engineer_power_user",
-  "fit": "medium",
-  "confidence": "low",
-  "action": "enrich_more",
-  "evidence_used": ["developer tools", "AI workflow mention"],
-  "unresolved_questions": ["current role unclear"],
-  "review_required": false
-}
+Skill          Tokens  Rows  Tier 1    Tier 2    Tier 3   Tier 0
+thin skills    2,603   114   35 (31%)  14 (12%)  2 (2%)   63 (55%)
+thick skills   7,001   114   38 (33%)  16 (14%)  6 (5%)   54 (47%)
 ```
 
 ---
 
 <!--
 tone: green
-eyebrow: This is not about leads
-notes: This makes the talk more generally useful to engineers. The demo is lead-ish, but the pattern works across judgment skills.
+eyebrow: Benchmark
+layout: benchmark
+notes: This is the second half: the production-shaped skill has to preserve evidence, uncertainty, exclusions, and the output contract. A thick skill can look helpful while violating the boundaries another system depends on.
 -->
 
-# The pattern is portable.
+# What survives production?
 
-- Bug triage -> owner, severity, next step
-- Support routing -> urgency, missing info
-- Code review -> risk, evidence, patch path
-
----
-
-<!--
-eyebrow: Team practice
-notes: This is the central repo point. It should feel like an engineering practice, not a Kite feature.
--->
-
-# Your skills should not live on someone's laptop.
-
-Company judgment belongs in a repo.
-
----
-
-<!--
-tone: blue
-eyebrow: Why the repo matters
-notes: This is the repo-as-memory point. Mention git log as eval signal for improving the skill creator, but do not make it the main demo.
--->
-
-# Your skills repo is company memory.
-
-- Review history
-- Examples that compound
-- Better skill creation over time
+```text
+Skill          Evidence required  Low confidence handled  Exclusions respected  Output contract pure  Problems
+thin skills    pass               pass                    pass                  pass                  0
+thick skills   pass               fail                    fail                  fail                  110
+```
 
 ---
 
 <!--
 tone: green
 eyebrow: Takeaway
-notes: End with the practical lesson, not a product pitch. Kite can be a small footnote in the repo line.
+notes: I want to go back to my formula from the beginning. To get to this higher level of AI enlightment with "loop engineering" and removing yourself from invoking skills manually and checking your agents, I think it's going to be important to master building agent-invoked skills. The smallest thing you can do today is take one of your skills, add some structured outputs and a few test cases, then iterate and improve.
 -->
 
-# Do not make the prompt longer.
+# Skills That Survive Production
 
-Make the judgment testable.
+Good output = judgment + contract
 
 ---
 
 <!--
-eyebrow: Steal the pattern
-notes: CTA should be a useful artifact. Kite waitlist is allowed, but it should not be the emotional close.
+layout: thanks
+notes: Thank you so much, if you scan the QR code you have access to the example ICP skill that you can adapt for your business. Make sure you customize it by adding in examples of your customers and what tier 1/tier 2/tier 3 means in the context of your GTM.
 -->
 
-# Repo has the talk, skill builder, templates, and examples.
+# Thank you!!
 
-Kite waitlist is there too, if this is your problem.
+Scan the QR code for my slides + skills. DM me with questions anytime!
+
+![QR code for https://kiteand.co/links](assets/kite-links-qr.svg)

@@ -1,0 +1,17 @@
+{
+  "tier": 2,
+  "label": "operators_at_devtools_ai_startups",
+  "description": "Illustrative Tier 2 examples for DevRel, PMM, growth/GTM, engineers, and relevant agency owners at devtools or AI startups. These are grounding examples, not scoring rules.",
+  "examples": [
+    "founding engineer at an AI developer tool",
+    "product engineer at an API infrastructure startup",
+    "developer advocate at a devtools startup",
+    "product marketing lead at an AI coding product",
+    "growth lead at a developer platform startup",
+    "agency owner running DevRel programs for AI infrastructure startups"
+  ],
+  "notes": [
+    "Use the Tier 2 scoring rules in icp_spec.json first.",
+    "Tier 2 is for strong champion/operator fit at devtools or AI startups, not generic startup employees or generic sales."
+  ]
+}

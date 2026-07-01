@@ -1,0 +1,17 @@
+{
+  "tier": 1,
+  "label": "founders_of_devtools_ai_startups",
+  "description": "Illustrative Tier 1 examples for founders of devtools or AI startups. These are grounding examples, not scoring rules.",
+  "examples": [
+    "founder of an AI coding tool startup",
+    "co-founder of a developer API platform",
+    "technical founder of an observability startup",
+    "CTO/co-founder of an AI agent infrastructure company",
+    "founder of a developer workflow automation startup",
+    "founder of a named demo-category devtools/AI product company"
+  ],
+  "notes": [
+    "Use the Tier 1 scoring rules in icp_spec.json first.",
+    "These examples anchor the intended profile; they are not an allowlist."
+  ]
+}

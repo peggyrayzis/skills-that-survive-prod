@@ -1,0 +1,17 @@
+{
+  "tier": 3,
+  "label": "other_startup_founders",
+  "description": "Illustrative Tier 3 examples for startup founders whose companies are not clearly devtools or AI. Team size, funding, customers, or employee count can raise confidence, but more than 10 employees is not a hard scoring gate. These are grounding examples, not scoring rules.",
+  "examples": [
+    "founder of a vertical SaaS startup with 25 employees",
+    "co-founder of a B2B workflow product with 40 employees",
+    "technical founder of a fintech startup with 18 employees",
+    "founder of a marketplace software company with 30 employees",
+    "CTO/co-founder of a startup with operating traction and unclear devtools or AI positioning"
+  ],
+  "notes": [
+    "Use the Tier 3 scoring rules in icp_spec.json first.",
+    "Tier 3 is still founder-led startup fit; non-founder roles belong in tier 0 unless they match Tier 2.",
+    "Do not assign tier 3 without employee-count evidence over 10."
+  ]
+}

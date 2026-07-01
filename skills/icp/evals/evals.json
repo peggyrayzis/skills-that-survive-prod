@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "skill": "icp",
+  "name": "resend-meetup-demo-quality-validators",
+  "description": "Boring quality validators for Resend meetup demo lead triage.",
+  "validators": [
+    {
+      "id": "evidence_required",
+      "name": "Evidence required",
+      "description": "Every non-zero tier must cite concrete account and person evidence.",
+      "checks": [
+        "tier 1, 2, and 3 outputs include non-empty reasons",
+        "reasons reference observed role, company, category, and employee-count evidence when required",
+        "meetup attendance alone is never enough for tier 1, 2, or 3",
+        "name-only records are tier 0"
+      ]
+    },
+    {
+      "id": "low_confidence_handled",
+      "name": "Low confidence handled",
+      "description": "Sparse, inferred, stale, or ambiguous evidence lowers confidence instead of getting over-promoted.",
+      "checks": [
+        "confidence is high only when LinkedIn plus current company evidence are present",
+        "confidence is medium when LinkedIn is present but company enrichment is incomplete",
+        "confidence is low when identity or account evidence is sparse",
+        "ambiguous founder/company matches stay tier 0 or review-needed",
+        "outputs never invent missing title, company, LinkedIn, X, account category, or employee count"
+      ]
+    },
+    {
+      "id": "exclusions_respected",
+      "name": "Exclusions respected",
+      "description": "Hard exclusions override otherwise good-looking ICP fit.",
+      "checks": [
+        "known_contact forces tier 0 when trusted CRM, customer, opportunity, contact, or relationship evidence strongly matches the lead",
+        "investor_only, early_career, speaker_or_host, sales_only, and freelancer matches force tier 0",
+        "host_or_competitor forces tier 0",
+        "exclusions_matched contains every applied exclusion id"
+      ]
+    },
+    {
+      "id": "output_contract_pure",
+      "name": "Output contract pure",
+      "description": "ICP evaluation does not smuggle in next actions.",
+      "checks": [
+        "outputs contain only account_fit, person_fit, tier, confidence, reasons, and exclusions_matched",
+        "outputs do not include recommended_next_actions, outreach instructions, campaign names, provider payloads, or send decisions",
+        "known-contact checks use a trusted source of truth such as CRM, customer, opportunity, contact, or relationship data"
+      ]
+    }
+  ],
+  "required_output_contract": {
+    "outputs": {
+      "account_fit": ["high", "medium", "low"],
+      "person_fit": ["high", "medium", "low"],
+      "tier": [0, 1, 2, 3],
+      "confidence": ["high", "medium", "low"]
+    },
+    "required_output_fields": [
+      "account_fit",
+      "person_fit",
+      "tier",
+      "confidence",
+      "reasons",
+      "exclusions_matched"
+    ]
+  }
+}

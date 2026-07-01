@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "dynamic_exclusions": [
+    {
+      "id": "known_contact",
+      "source": "crm_or_relationship_graph",
+      "purpose": "Suppress people who should not be treated as net-new leads because they are already known, already in-market, customers, active opportunities, teammates, or otherwise excluded by the operator's source of truth.",
+      "real_workflow": "Adapt this to the customer's CRM, customer list, active opportunity list, workspace contacts, or relationship graph before scoring. Pull those exclusions into the evidence packet or a resolved cohort, then map strong matches to known_contact.",
+      "demo_workflow": "For this public demo, use any provided existing-relationship evidence. Match by stable person id first, normalized profile URL second, normalized social handle third, and exact normalized name only when identity evidence is strong."
+    }
+  ],
+  "accounts": [
+    {
+      "reason": "host_or_competitor",
+      "domains": [],
+      "names": ["Resend"]
+    }
+  ],
+  "titles": [
+    {
+      "reason": "wrong_function",
+      "phrases": [
+        "finance-only",
+        "investment-only",
+        "real-estate-only",
+        "generic sales",
+        "account executive",
+        "sales development",
+        "business development representative"
+      ]
+    },
+    {
+      "reason": "early_career",
+      "phrases": [
+        "student",
+        "intern",
+        "incoming intern"
+      ]
+    },
+    {
+      "reason": "speaker_or_host",
+      "phrases": [
+        "speaker",
+        "host",
+        "organizer"
+      ]
+    },
+    {
+      "reason": "freelancer",
+      "phrases": [
+        "freelancer",
+        "freelance",
+        "independent consultant"
+      ]
+    }
+  ]
+}

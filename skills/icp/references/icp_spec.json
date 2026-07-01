@@ -1,0 +1,192 @@
+{
+  "version": "2026-07-01-resend-meetup-demo",
+  "outputs": {
+    "account_fit": ["high", "medium", "low"],
+    "person_fit": ["high", "medium", "low"],
+    "tier": [0, 1, 2, 3],
+    "confidence": ["high", "medium", "low"]
+  },
+  "required_output_fields": [
+    "account_fit",
+    "person_fit",
+    "tier",
+    "confidence",
+    "reasons",
+    "exclusions_matched"
+  ],
+  "evaluation_buckets": {
+    "account": [
+      {
+        "id": "devtools_or_ai_startup",
+        "description": "Startup building developer tools, APIs, infrastructure, observability, data platforms, security, code tools, agents, AI apps, AI infrastructure, evals, or named demo-category devtools/AI products."
+      },
+      {
+        "id": "startup_with_team_signal",
+        "description": "Startup has evidence of employees, funding, customers, or an operating team beyond a purely speculative side project. More than 10 employees is a strong signal, not a hard requirement."
+      },
+      {
+        "id": "product_surface",
+        "description": "Company has an owned software product, dashboard, API, workflow, or developer-facing product experience."
+      },
+      {
+        "id": "company_enriched",
+        "description": "Company enrichment is present enough to judge category, product surface, employee count, and startup context."
+      },
+      {
+        "id": "meetup_context",
+        "description": "Person attended the Resend DevTools Meetup. This is warm context only and does not prove fit by itself."
+      }
+    ],
+    "person": [
+      {
+        "id": "founder",
+        "description": "Person is a founder, co-founder, CEO, CTO, technical founder, or similarly accountable startup operator."
+      },
+      {
+        "id": "engineer",
+        "description": "Person works in engineering, product engineering, platform, infrastructure, frontend, full-stack, AI engineering, developer experience, or related technical implementation."
+      },
+      {
+        "id": "gtm",
+        "description": "Person works in DevRel, PMM, growth, GTM, partnerships, community, or related market-building work."
+      },
+      {
+        "id": "agency_owner",
+        "description": "Person owns an agency or studio with clear DevRel, PMM, growth, GTM, engineering, or implementation relevance to devtools/AI startups."
+      },
+      {
+        "id": "current_role_evidence",
+        "description": "There is current LinkedIn-backed evidence for the relevant role and company."
+      },
+      {
+        "id": "known_contact",
+        "description": "Trusted CRM, customer, opportunity, contact, or relationship evidence shows the operator already has a strong existing relationship with this person."
+      }
+    ]
+  },
+  "hard_exclusions": {
+    "account": [
+      {
+        "id": "host_or_competitor",
+        "description": "Resend or another host, speaker, organizer, or explicitly excluded competitor account."
+      },
+      {
+        "id": "not_startup",
+        "description": "Large non-startup, school, nonprofit, investor, professional services firm, or unrelated organization with no startup/product signal."
+      },
+      {
+        "id": "non_software_business",
+        "description": "Business appears unrelated to software, AI, devtools, data, infrastructure, or product workflows."
+      },
+      {
+        "id": "insufficient_company_evidence",
+        "description": "Company category, product surface, startup status, or employee count cannot be judged from available enrichment."
+      }
+    ],
+    "person": [
+      {
+        "id": "known_contact",
+        "description": "Person is already in the operator's CRM, customer, opportunity, contact, or relationship source of truth."
+      },
+      {
+        "id": "investor_only",
+        "description": "Investor, advisor, or ecosystem role without direct company operating, buying, implementation, or GTM ownership."
+      },
+      {
+        "id": "early_career",
+        "description": "Student, intern, incoming intern, or too early-career to be useful for this demo lead list."
+      },
+      {
+        "id": "speaker_or_host",
+        "description": "Person is a meetup speaker, host, organizer, or host-company employee rather than an attendee lead."
+      },
+      {
+        "id": "sales_only",
+        "description": "Generic sales, account executive, SDR, BDR, or sales-only role without DevRel, PMM, growth, GTM, product, technical, devtools, AI, or startup-operator evidence."
+      },
+      {
+        "id": "freelancer",
+        "description": "Freelancer or solo consultant without agency-owner, startup-operator, or devtools/AI GTM relevance."
+      },
+      {
+        "id": "wrong_function",
+        "description": "Primary role is finance, investment, HR, recruiting, legal, real estate, or another function with no relevant operating, technical, or GTM path."
+      },
+      {
+        "id": "insufficient_identity_evidence",
+        "description": "Only a name, weak inferred identity, or non-current role evidence is available."
+      }
+    ]
+  },
+  "tiers": {
+    "tier_1": {
+      "label": "founders_of_devtools_ai_startups",
+      "definition": "Founders of devtools or AI startups, including named demo-category companies.",
+      "account_rules": {
+        "must_have": ["devtools_or_ai_startup", "product_surface", "company_enriched"]
+      },
+      "person_rules": {
+        "must_have": ["founder", "current_role_evidence"],
+        "positive_titles": ["Founder", "Co-Founder", "Technical Founder", "CEO", "CTO"]
+      }
+    },
+    "tier_2": {
+      "label": "operators_at_devtools_ai_startups",
+      "definition": "DevRel, PMM, growth/GTM operators, engineers, or relevant agency owners at devtools or AI startups.",
+      "account_rules": {
+        "must_have": ["devtools_or_ai_startup", "product_surface", "company_enriched"]
+      },
+      "person_rules": {
+        "must_have_one_of": ["engineer", "gtm", "agency_owner"],
+        "positive_titles": [
+          "Engineer",
+          "Founding Engineer",
+          "Software Engineer",
+          "Product Engineer",
+          "Platform Engineer",
+          "Developer Advocate",
+          "Developer Relations",
+          "Product Marketing",
+          "PMM",
+          "Growth",
+          "GTM",
+          "Solutions Engineer",
+          "Partnerships",
+          "Agency Owner",
+          "Studio Founder"
+        ]
+      }
+    },
+    "tier_3": {
+      "label": "other_startup_founders",
+      "definition": "Startup founders whose companies are not clearly devtools or AI, with team size or operating traction used as confidence evidence rather than a hard gate.",
+      "account_rules": {
+        "must_have": ["startup_with_team_signal", "product_surface", "company_enriched"],
+        "must_not_have": ["devtools_or_ai_startup"]
+      },
+      "person_rules": {
+        "must_have": ["founder", "current_role_evidence"],
+        "positive_titles": ["Founder", "Co-Founder", "Technical Founder", "CEO", "CTO"]
+      }
+    }
+  },
+  "defaults": {
+    "fit_logic": {
+      "high": "Clear current evidence supports the required account or person rules with no hard exclusions.",
+      "medium": "Relevant evidence exists, but category, employee count, role, or freshness is incomplete.",
+      "low": "Hard exclusion matched, evidence is too sparse, or the person/account does not match this demo ICP."
+    },
+    "confidence_logic": {
+      "high": "LinkedIn plus current company evidence are present, and company enrichment supports the account category.",
+      "medium": "LinkedIn or current company evidence is present, but company enrichment or category confidence is incomplete.",
+      "low": "Sparse, inferred, stale, ambiguous, or name-only evidence."
+    },
+    "tier_logic": {
+      "global": "Hard exclusions force tier 0. Do not assign tier 1, 2, or 3 unless account_fit and person_fit are medium or high.",
+      "tier_1": "Use for founders of devtools/AI startups.",
+      "tier_2": "Use for DevRel, PMM, growth/GTM operators, engineers, or relevant agency owners at devtools/AI startups.",
+      "tier_3": "Use for other startup founders whose companies are not clearly devtools or AI. More than 10 employees raises confidence, but do not force otherwise qualified startup founders to tier 0 solely because employee count is missing or smaller.",
+      "tier_0": "Use for hard exclusions, known-contact people, name-only records, wrong functions, non-startups, non-software businesses, investors, students, speakers, hosts, generic sales, freelancers, or insufficient evidence."
+    }
+  }
+}

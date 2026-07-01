@@ -8,9 +8,9 @@ const path = require("path");
 const PORT = Number(process.env.PORT || 6174);
 const DECK_FILE =
   process.env.DECK_FILE ||
-  path.join(__dirname, "skills-that-survive-production.html");
+  path.join(__dirname, "slides-renderer", "skills-that-survive-production.html");
 const SLIDES_FILE = path.join(__dirname, "slides.md");
-const RENDER_SCRIPT = path.join(__dirname, "render-slides.cjs");
+const RENDER_SCRIPT = path.join(__dirname, "slides-renderer", "render-slides.cjs");
 const WATCH_SLIDES = process.env.WATCH_SLIDES === "1";
 
 let currentIndex = 0;
@@ -210,6 +210,39 @@ function serveDeck(res) {
 
   const html = readDeck().replace("</body>", `${remoteScript}\n</body>`);
   send(res, 200, "text/html; charset=utf-8", html);
+}
+
+function contentTypeFor(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  if (ext === ".png") return "image/png";
+  if (ext === ".jpg" || ext === ".jpeg") return "image/jpeg";
+  if (ext === ".webp") return "image/webp";
+  if (ext === ".svg") return "image/svg+xml";
+  if (ext === ".css") return "text/css; charset=utf-8";
+  if (ext === ".js") return "text/javascript; charset=utf-8";
+  return "application/octet-stream";
+}
+
+function serveStaticAsset(urlPath, res) {
+  const relativePath = decodeURIComponent(urlPath.replace(/^\/+/, ""));
+  const filePath = path.resolve(__dirname, relativePath);
+  const assetsRoot = path.resolve(__dirname, "assets");
+  if (!filePath.startsWith(`${assetsRoot}${path.sep}`)) {
+    send(res, 404, "text/plain; charset=utf-8", "Not found");
+    return;
+  }
+
+  fs.readFile(filePath, (error, data) => {
+    if (error) {
+      send(res, 404, "text/plain; charset=utf-8", "Not found");
+      return;
+    }
+    res.writeHead(200, {
+      "content-type": contentTypeFor(filePath),
+      "cache-control": "no-store",
+    });
+    res.end(data);
+  });
 }
 
 function servePresenter(res) {
@@ -434,6 +467,11 @@ const server = http.createServer(async (req, res) => {
 
   if (url.pathname === "/presenter") {
     servePresenter(res);
+    return;
+  }
+
+  if (url.pathname.startsWith("/assets/")) {
+    serveStaticAsset(url.pathname, res);
     return;
   }
 

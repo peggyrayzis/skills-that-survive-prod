@@ -1,0 +1,1402 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Skills That Survive Production</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Mozilla+Headline:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #12363c;
+        --muted: #4f7480;
+        --paper: #83cded;
+        --panel: #e8f8fc;
+        --card: #fbfeff;
+        --border: #ffffff;
+        --rule: rgba(42, 111, 138, 0.18);
+        --accent: #2a6f8a;
+        --accent-2: #7ec984;
+        --accent-3: #13a6d4;
+        --warn: #e65f45;
+        --shadow:
+          0 18px 46px rgba(42, 111, 138, 0.08),
+          0 0 0 3px rgba(238, 246, 249, 0.82) inset;
+        --font-display:
+          "Mozilla Headline", "Avenir Next", "Helvetica Neue", Inter,
+          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        --font-text:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        --font-mono:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background:
+          linear-gradient(
+            180deg,
+            #13a6d4 0%,
+            #83cded 46%,
+            #7ec984 100%
+          );
+        color: var(--ink);
+        font-family: var(--font-text);
+        overflow: hidden;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .stage {
+        width: 1920px;
+        height: 1080px;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        overflow: hidden;
+        transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+        transform-origin: center center;
+        container-type: size;
+      }
+
+      .deck {
+        height: 100%;
+        width: 100%;
+        display: grid;
+        place-items: start center;
+        padding: clamp(24px, 3cqw, 56px);
+      }
+
+      .slide {
+        display: none;
+        width: min(1600px, 100%);
+        height: min(860px, calc(100cqh - clamp(112px, 12cqw, 210px)));
+        min-height: 560px;
+        background: var(--panel);
+        border: 3px solid var(--border);
+        border-radius: clamp(24px, 1.8cqw, 34px);
+        box-shadow: var(--shadow);
+        padding: clamp(70px, 5.2cqw, 100px) clamp(82px, 6cqw, 116px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .slide.active {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .slide::before {
+        content: none;
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .slide::after {
+        content: "";
+        position: absolute;
+        right: 28px;
+        bottom: 24px;
+        width: 245px;
+        height: 160px;
+        background-image: radial-gradient(
+          circle,
+          rgba(42, 111, 138, 0.1) 0 1.5px,
+          transparent 2.5px
+        );
+        background-size: 20px 20px;
+        mask-image: linear-gradient(135deg, transparent 0%, black 52%);
+        pointer-events: none;
+      }
+
+      .slide > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .slide[data-tone="green"]::before {
+        border-top-color: transparent;
+      }
+
+      .slide[data-tone="blue"]::before {
+        border-top-color: transparent;
+      }
+
+      .eyebrow {
+        color: rgba(18, 54, 60, 0.58);
+        display: block;
+        font-family: var(--font-text);
+        font-size: clamp(13px, 1.05cqw, 16px);
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        line-height: 1;
+        margin: 0 0 18px;
+      }
+
+      .eyebrow::before {
+        content: none;
+      }
+
+      .slide[data-tone="green"] .eyebrow {
+        color: rgba(18, 54, 60, 0.58);
+      }
+
+      .slide[data-tone="blue"] .eyebrow {
+        color: rgba(18, 54, 60, 0.58);
+      }
+
+      h1,
+      h2 {
+        color: var(--ink);
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: 0;
+        margin: 0;
+        line-height: 0.98;
+        max-width: 1060px;
+      }
+
+      h1 {
+        max-width: 930px;
+      }
+
+      h1 {
+        font-size: clamp(58px, 7.1cqw, 126px);
+      }
+
+      h2 {
+        font-size: clamp(42px, 5.2cqw, 92px);
+      }
+
+      p {
+        color: var(--muted);
+        font-size: clamp(25px, 2.45cqw, 44px);
+        font-weight: 600;
+        line-height: 1.18;
+        max-width: 860px;
+        margin: 28px 0 0;
+      }
+
+      .small {
+        font-size: clamp(22px, 2cqw, 34px);
+        color: var(--muted);
+        line-height: 1.25;
+      }
+
+      .big-line {
+        font-family: var(--font-display);
+        font-size: clamp(42px, 5cqw, 90px);
+        line-height: 1.02;
+        font-weight: 700;
+        max-width: 1120px;
+      }
+
+      .stack {
+        display: grid;
+        gap: 14px;
+        margin-top: 36px;
+        max-width: 900px;
+      }
+
+      .stack div {
+        color: var(--ink);
+        font-family: var(--font-text);
+        font-size: clamp(24px, 2.35cqw, 40px);
+        font-weight: 700;
+        line-height: 1.16;
+        padding: 0 0 0 28px;
+        position: relative;
+      }
+
+      .stack div::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.48em;
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(42, 111, 138, 0.44);
+      }
+
+      .slide.active[data-layout="split-list"] {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(340px, 0.64fr);
+        align-content: center;
+        align-items: center;
+        column-gap: 96px;
+      }
+
+      .slide[data-layout="split-list"] h2 {
+        max-width: 680px;
+        font-size: clamp(48px, 5.25cqw, 82px);
+      }
+
+      .slide[data-layout="split-list"] .stack {
+        max-width: none;
+        margin-top: 0;
+      }
+
+      .slide[data-layout="split-list"] .stack div {
+        font-size: clamp(28px, 2.25cqw, 39px);
+        line-height: 1.18;
+      }
+
+      .slide.active[data-layout="intro-photo"] {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.46fr);
+        grid-template-rows: auto auto;
+        align-content: center;
+        align-items: center;
+        column-gap: clamp(52px, 5cqw, 88px);
+      }
+
+      .slide[data-layout="intro-photo"] h2 {
+        grid-column: 1;
+        grid-row: 1;
+        max-width: 760px;
+        font-size: clamp(48px, 5cqw, 84px);
+      }
+
+      .slide[data-layout="intro-photo"] .stack {
+        grid-column: 1;
+        grid-row: 2;
+        max-width: 790px;
+      }
+
+      .slide[data-layout="intro-photo"] .stack div {
+        font-size: clamp(24px, 2.1cqw, 35px);
+        line-height: 1.18;
+      }
+
+      .slide[data-layout="intro-photo"] .artifact {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        align-self: center;
+        justify-self: end;
+        width: min(380px, 100%);
+        height: clamp(430px, 45cqw, 560px);
+        margin: 0;
+        overflow: hidden;
+        border: 3px solid var(--border);
+        border-radius: 22px;
+        background: rgba(251, 254, 255, 0.78);
+        box-shadow:
+          0 16px 36px rgba(42, 111, 138, 0.14),
+          0 0 0 3px rgba(238, 246, 249, 0.82) inset;
+      }
+
+      .slide[data-layout="intro-photo"] .artifact img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 44%;
+        border-radius: 18px;
+        box-shadow: none;
+      }
+
+      .slide.active[data-layout="continuum"] {
+        justify-content: center;
+      }
+
+      .slide[data-layout="continuum"] h2 {
+        max-width: 1120px;
+        font-size: clamp(42px, 4.7cqw, 88px);
+      }
+
+      .slide[data-layout="continuum"] .stack {
+        position: relative;
+        width: 100%;
+        max-width: 1240px;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: 22px;
+        margin-top: 72px;
+        padding-top: 48px;
+      }
+
+      .slide[data-layout="continuum"] .stack::before {
+        content: "";
+        position: absolute;
+        top: 16px;
+        left: 9px;
+        right: 9px;
+        height: 3px;
+        border-radius: 999px;
+        background: linear-gradient(
+          90deg,
+          rgba(42, 111, 138, 0.42),
+          rgba(119, 181, 134, 0.62)
+        );
+      }
+
+      .slide[data-layout="continuum"] .stack::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        right: 0;
+        width: 19px;
+        height: 19px;
+        border-radius: 999px;
+        background: rgba(119, 181, 134, 0.86);
+        box-shadow: 0 0 0 5px rgba(119, 181, 134, 0.16);
+      }
+
+      .slide[data-layout="continuum"] .stack div {
+        display: flex;
+        min-height: 108px;
+        flex-direction: column;
+        align-items: flex-start;
+        color: var(--muted);
+        font-size: clamp(20px, 1.5cqw, 27px);
+        font-weight: 650;
+        line-height: 1.22;
+        padding: 0;
+      }
+
+      .slide[data-layout="continuum"] .stack div:nth-child(1) {
+        grid-column: 1 / 5;
+      }
+
+      .slide[data-layout="continuum"] .stack div:nth-child(2) {
+        grid-column: 5 / 7;
+      }
+
+      .slide[data-layout="continuum"] .stack div:nth-child(3) {
+        grid-column: 8 / 10;
+      }
+
+      .slide[data-layout="continuum"] .stack div:nth-child(4) {
+        grid-column: 10 / 13;
+        align-items: flex-end;
+        text-align: right;
+      }
+
+      .slide[data-layout="continuum"] .stack div::before {
+        top: -34px;
+        left: 0;
+        width: 18px;
+        height: 18px;
+        background: var(--panel);
+        border: 4px solid rgba(42, 111, 138, 0.58);
+        box-sizing: border-box;
+        z-index: 1;
+      }
+
+      .slide[data-layout="continuum"] .stack div:nth-child(2)::before {
+        border-color: rgba(67, 144, 148, 0.68);
+      }
+
+      .slide[data-layout="continuum"] .stack div:nth-child(3)::before {
+        border-color: rgba(119, 181, 134, 0.76);
+      }
+
+      .slide[data-layout="continuum"] .stack div:nth-child(4)::before {
+        content: none;
+      }
+
+      .slide[data-layout="continuum"] .stack strong {
+        display: block;
+        min-height: 44px;
+        margin-bottom: 14px;
+        color: var(--ink);
+        font-size: clamp(14px, 1cqw, 18px);
+        font-weight: 800;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .slide[data-layout="continuum"] .stack code {
+        display: inline-flex;
+        align-items: center;
+        margin: 0 8px 10px 0;
+        padding: 8px 11px;
+        border: 1px solid rgba(42, 111, 138, 0.2);
+        border-radius: 7px;
+        background: rgba(251, 254, 255, 0.68);
+        color: var(--ink);
+        font-size: clamp(17px, 1.15cqw, 22px);
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(42, 111, 138, 0.05);
+      }
+
+      .slide[data-layout="continuum"] .stack code:first-of-type {
+        margin-top: auto;
+      }
+
+      .slide[data-layout="clay-artifact"] {
+        justify-content: flex-start;
+        padding-top: clamp(56px, 4.2cqw, 78px);
+      }
+
+      .slide[data-layout="clay-artifact"] h2 {
+        max-width: 940px;
+        font-size: clamp(54px, 5.25cqw, 92px);
+      }
+
+      .slide[data-layout="clay-artifact"] p:not(.eyebrow) {
+        max-width: 1120px;
+        margin-top: 12px;
+        font-size: clamp(28px, 2.35cqw, 44px);
+        line-height: 1.16;
+      }
+
+      .artifact {
+        width: 100%;
+        max-width: 1080px;
+        margin: 22px 0 0;
+      }
+
+      .artifact img {
+        display: block;
+        width: 100%;
+        height: auto;
+        background: transparent;
+        border: 0;
+        border-radius: 10px;
+        box-shadow: 0 12px 32px rgba(42, 111, 138, 0.12);
+      }
+
+      .slide.active[data-layout="thanks"] {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
+        align-content: center;
+        align-items: center;
+        column-gap: clamp(56px, 6cqw, 96px);
+      }
+
+      .slide[data-layout="thanks"] h2,
+      .slide[data-layout="thanks"] p {
+        grid-column: 1;
+      }
+
+      .slide[data-layout="thanks"] h2 {
+        max-width: 760px;
+        font-size: clamp(68px, 6.4cqw, 112px);
+      }
+
+      .slide[data-layout="thanks"] p {
+        max-width: 620px;
+      }
+
+      .slide[data-layout="thanks"] .artifact {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        width: min(390px, 100%);
+        max-width: none;
+        margin: 0;
+        justify-self: center;
+      }
+
+      .slide[data-layout="thanks"] .artifact img {
+        padding: clamp(12px, 1.2cqw, 18px);
+        background: #ffffff;
+        border: 3px solid rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        box-shadow: 0 16px 38px rgba(42, 111, 138, 0.14);
+      }
+
+      .slide[data-layout="clay-artifact"] .artifact {
+        align-self: center;
+        display: block;
+        flex: 0 0 auto;
+        width: min(1600px, calc(100% + 160px));
+        max-width: none;
+        height: auto;
+        margin: clamp(26px, 2.8vw, 42px) 0 0;
+        overflow: hidden;
+        border: 1px solid rgba(42, 111, 138, 0.12);
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 18px 44px rgba(42, 111, 138, 0.16);
+      }
+
+      .slide[data-layout="clay-artifact"] .clay-mess img {
+        width: 100%;
+        height: auto;
+        max-height: 560px;
+        max-width: none;
+        object-fit: contain;
+        object-position: top left;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .artifact-label {
+        position: absolute;
+        z-index: 2;
+        top: 12px;
+        left: 12px;
+        padding: 6px 9px;
+        border: 1px solid rgba(18, 54, 60, 0.14);
+        border-radius: 7px;
+        background: rgba(251, 254, 255, 0.92);
+        color: rgba(18, 54, 60, 0.72);
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .slide[data-layout="contract"] {
+        justify-content: flex-start;
+      }
+
+      .slide[data-layout="contract"] h2 {
+        max-width: 1040px;
+        font-size: clamp(46px, 5cqw, 84px);
+      }
+
+      .slide[data-layout="contract"] .stack {
+        width: 100%;
+        max-width: none;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 28px;
+        margin-top: clamp(36px, 3cqw, 56px);
+      }
+
+      .slide[data-layout="contract"] .stack div {
+        background: rgba(251, 254, 255, 0.88);
+        border: 3px solid var(--border);
+        border-radius: 20px;
+        box-shadow:
+          0 4px 24px rgba(42, 111, 138, 0.08),
+          0 0 0 3px rgba(238, 246, 249, 0.82) inset;
+        min-height: clamp(300px, 31cqh, 340px);
+        padding: 32px 28px 34px;
+        font-size: clamp(26px, 2.05cqw, 39px);
+        line-height: 1.18;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        position: relative;
+      }
+
+      .slide[data-layout="contract"] .stack div::before {
+        content: none;
+      }
+
+      .slide[data-layout="contract"] .stack div + div::before {
+        content: "";
+        position: absolute;
+        left: -27px;
+        top: 50%;
+        width: 24px;
+        height: 2px;
+        background: rgba(42, 111, 138, 0.5);
+      }
+
+      .slide[data-layout="contract"] .stack strong {
+        display: block;
+        color: rgba(18, 54, 60, 0.6);
+        font-family: var(--font-text);
+        font-size: clamp(14px, 1cqw, 18px);
+        font-weight: 700;
+        letter-spacing: 0;
+        line-height: 1.1;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+      }
+
+      .slide.active[data-layout="contract-sandwich"] {
+        display: grid;
+        grid-template-columns: minmax(0, 0.94fr) minmax(330px, 0.7fr);
+        grid-template-rows: auto auto 1fr;
+        align-content: center;
+        align-items: center;
+        column-gap: 72px;
+      }
+
+      .slide[data-layout="contract-sandwich"] .eyebrow,
+      .slide[data-layout="contract-sandwich"] h2 {
+        grid-column: 1 / -1;
+      }
+
+      .slide[data-layout="contract-sandwich"] h2 {
+        max-width: 1040px;
+        font-size: clamp(46px, 5cqw, 82px);
+      }
+
+      .slide[data-layout="contract-sandwich"] .stack {
+        grid-column: 1;
+        grid-row: 3;
+        width: 100%;
+        max-width: none;
+        gap: 14px;
+        margin-top: 34px;
+      }
+
+      .slide[data-layout="contract-sandwich"] .stack div {
+        background: rgba(251, 254, 255, 0.8);
+        border: 3px solid var(--border);
+        border-radius: 18px;
+        box-shadow:
+          0 4px 24px rgba(42, 111, 138, 0.08),
+          0 0 0 3px rgba(238, 246, 249, 0.82) inset;
+        min-height: 98px;
+        padding: 20px 22px 22px;
+        font-size: clamp(22px, 1.8cqw, 28px);
+        line-height: 1.16;
+      }
+
+      .slide[data-layout="contract-sandwich"] .stack div::before {
+        content: none;
+      }
+
+      .slide[data-layout="contract-sandwich"] .stack strong {
+        display: block;
+        color: rgba(18, 54, 60, 0.6);
+        font-family: var(--font-text);
+        font-size: clamp(12px, 1cqw, 14px);
+        font-weight: 700;
+        letter-spacing: 0;
+        line-height: 1.1;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+
+      .sandwich-visual {
+        grid-column: 2;
+        grid-row: 3;
+        width: min(440px, 100%);
+        max-width: none;
+        margin: 28px 0 0;
+        justify-self: center;
+        position: relative;
+      }
+
+      .sandwich-visual img {
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        filter: drop-shadow(0 18px 24px rgba(42, 111, 138, 0.16));
+      }
+
+      .sandwich-callout {
+        position: absolute;
+        display: grid;
+        gap: 2px;
+        min-width: 116px;
+        padding: 7px 9px;
+        background: rgba(251, 254, 255, 0.9);
+        border: 2px solid rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        box-shadow: 0 8px 22px rgba(42, 111, 138, 0.12);
+        color: var(--ink);
+        font-family: var(--font-text);
+        line-height: 1;
+      }
+
+      .sandwich-callout strong {
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .sandwich-callout em {
+        color: var(--muted);
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 700;
+      }
+
+      .sandwich-callout-input {
+        left: 20%;
+        top: 10%;
+      }
+
+      .sandwich-callout-judgment {
+        right: 5%;
+        top: 43%;
+      }
+
+      .sandwich-callout-output {
+        left: 30%;
+        bottom: 3%;
+      }
+
+      .slide[data-layout="code"],
+      .slide[data-layout="benchmark"] {
+        justify-content: flex-start;
+      }
+
+      .slide[data-layout="code"] h2,
+      .slide[data-layout="benchmark"] h2 {
+        font-size: clamp(44px, 4.8cqw, 76px);
+      }
+
+      .slide[data-layout="code"] pre {
+        width: min(1240px, 100%);
+        font-size: clamp(18px, 1.2cqw, 22px);
+        line-height: 1.12;
+        margin-top: clamp(28px, 2.3cqw, 44px);
+        padding: 48px 30px 22px;
+      }
+
+      .slide[data-layout="benchmark"] .benchmark-table {
+        margin-top: 30px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 42px;
+      }
+
+      .tile {
+        border: 3px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+        min-height: 160px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .tile strong {
+        font-size: 28px;
+      }
+
+      .tile span {
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1.25;
+        margin-top: 18px;
+      }
+
+      pre {
+        position: relative;
+        margin: 34px 0 0;
+        padding: 58px 30px 30px;
+        width: min(1000px, 100%);
+        background: #0f2b2e;
+        color: #eafdff;
+        border: 3px solid var(--border);
+        border-radius: 20px;
+        box-shadow:
+          0 4px 24px rgba(42, 111, 138, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.18);
+        font-size: clamp(15px, 1.45cqw, 21px);
+        line-height: 1.35;
+        overflow: hidden;
+        max-width: 100%;
+      }
+
+      pre[data-lang]::before {
+        content: attr(data-lang);
+        position: absolute;
+        top: 18px;
+        left: 24px;
+        color: #addff4;
+        font-family: var(--font-text);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      code {
+        font-family: var(--font-mono);
+      }
+
+      .stack code {
+        color: var(--accent);
+        font-size: 0.82em;
+      }
+
+      .benchmark-table {
+        margin-top: 34px;
+        width: min(980px, 100%);
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+        background: var(--card);
+        border: 3px solid var(--border);
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(42, 111, 138, 0.08);
+        color: var(--ink);
+        font-size: clamp(19px, 1.85cqw, 25px);
+      }
+
+      .benchmark-table th,
+      .benchmark-table td {
+        border-bottom: 1px solid var(--rule);
+        padding: 16px 20px;
+        text-align: left;
+      }
+
+      .benchmark-table th {
+        background: rgba(223, 242, 246, 0.7);
+        color: var(--muted);
+        font-family: var(--font-text);
+        font-size: clamp(13px, 1.2cqw, 16px);
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .benchmark-table tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .benchmark-table td:first-child {
+        font-weight: 700;
+      }
+
+      .benchmark-table .metric {
+        font-family: var(--font-mono);
+        font-weight: 700;
+      }
+
+      .benchmark-table td:nth-child(2) {
+        color: var(--warn);
+      }
+
+      .benchmark-table td:nth-child(3) {
+        color: #2a7d50;
+      }
+
+      .benchmark-table td.pass {
+        color: #2a7d50;
+      }
+
+      .benchmark-table td.fail {
+        color: #b8322a;
+      }
+
+      .table {
+        margin-top: 34px;
+        width: min(980px, 100%);
+        border-collapse: collapse;
+        font-size: clamp(18px, 2cqw, 27px);
+      }
+
+      .table th,
+      .table td {
+        border-bottom: 1px solid var(--rule);
+        padding: 16px 14px;
+        text-align: left;
+      }
+
+      .table th {
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .table .bad {
+        color: var(--warn);
+        font-weight: 700;
+      }
+
+      .table .good {
+        color: var(--accent-2);
+        font-weight: 700;
+      }
+
+      .chrome {
+        position: fixed;
+        left: clamp(28px, 2.4cqw, 46px);
+        right: clamp(28px, 2.4cqw, 46px);
+        bottom: clamp(12px, 1.2cqw, 22px);
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: clamp(18px, 1.8cqw, 34px);
+        color: rgba(18, 54, 60, 0.78);
+        font-size: clamp(14px, 0.9cqw, 18px);
+        pointer-events: none;
+      }
+
+      .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: clamp(10px, 0.9cqw, 18px);
+      }
+
+      .footer-name {
+        font-size: clamp(18px, 1.2cqw, 24px);
+        font-weight: 800;
+      }
+
+      .footer-progress {
+        position: relative;
+        display: flex;
+        min-height: clamp(44px, 3.8cqw, 72px);
+        align-items: center;
+        justify-content: center;
+      }
+
+      #counter {
+        position: absolute;
+        top: calc(50% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+      }
+
+      .footer-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      .qr-slot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: clamp(82px, 5.8cqw, 112px);
+        height: clamp(82px, 5.8cqw, 112px);
+        padding: clamp(6px, 0.48cqw, 9px);
+        border: 1px solid rgba(255, 255, 255, 0.82);
+        border-radius: clamp(10px, 0.72cqw, 14px);
+        background: #ffffff;
+        box-shadow: 0 8px 22px rgba(42, 111, 138, 0.12);
+      }
+
+      .qr-slot img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .controls {
+        pointer-events: auto;
+        display: flex;
+        gap: 8px;
+      }
+
+      .controls button {
+        width: 36px;
+        height: 36px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 999px;
+        background: rgba(251, 254, 255, 0.92);
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      .notes {
+        position: fixed;
+        top: 28px;
+        right: 28px;
+        width: min(420px, calc(100vw - 56px));
+        max-height: calc(100vh - 96px);
+        background: rgba(251, 254, 255, 0.97);
+        border: 3px solid var(--border);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 20px;
+        overflow: auto;
+        display: none;
+      }
+
+      .notes.open {
+        display: block;
+      }
+
+      .notes h3 {
+        margin: 0 0 12px;
+        font-size: 15px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0;
+      }
+
+      .notes p {
+        margin: 0;
+        font-size: 17px;
+        line-height: 1.45;
+      }
+
+      .notes p + p {
+        margin-top: 12px;
+      }
+
+      .progress {
+        width: 174px;
+        height: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.82);
+        border-radius: 999px;
+        background: rgba(251, 254, 255, 0.72);
+        overflow: hidden;
+      }
+
+      .progress span {
+        display: block;
+        height: 100%;
+        background: var(--ink);
+        width: 0%;
+      }
+
+      @media print {
+        body {
+          overflow: visible;
+          background: white;
+        }
+
+        .deck {
+          display: block;
+          padding: 0;
+        }
+
+        .stage {
+          width: 100vw;
+          height: 100vh;
+          transform: none;
+        }
+
+        .slide,
+        .slide.active {
+          display: flex;
+          page-break-after: always;
+          width: 100vw;
+          height: 100vh;
+          box-shadow: none;
+          border: 0;
+        }
+
+        .chrome,
+        .notes {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage" id="stage">
+      <main class="deck" aria-live="polite">
+      <section class="slide active" id="slide-1" data-notes="Who here has created an agent skill? Keep your hand raised if you use them weekly. Daily. 10 times a day? 100 times a day? How about 10,000 times a day? Today I'm here to share some tips on how I've built reliable skills that my agent uses in production at least 10,000 times a day! I've given versions of this as a skills training to my clients and both engineers and non-technical people have learned something new. So I hope you do too!">
+        <h1>Skills That Survive Production</h1>
+        <p>Good output = judgment + contract</p>
+      </section>
+
+      <section class="slide" id="slide-2" data-layout="intro-photo" data-notes="My name is Peggy. I am an engineer turned marketer, and I have worked with founders at companies like Render, Imbue, LiveKit, and InsForge on launches and early GTM. Before scale.dev, I was at Apollo GraphQL for 7 years. A lot of this talk comes from manually building the same workflows over and over again, first as services, and now in my marketing agent Kite.">
+        <h2>@peggyrayzis</h2>
+        <div class="stack">
+          <div>scale.dev: Engineer turned marketer shipping launches for devtools/AI founders</div>
+          <div>Live in Jersey City with my dog Simba</div>
+          <div>Building Kite, a marketing agent that runs on skills</div>
+        </div>
+        <figure class="artifact"><img src="assets/peggy-intro.webp" alt="Peggy Rayzis" /></figure>
+      </section>
+
+      <section class="slide" id="slide-3" data-notes="When skills came out, I was hooked. For me, it kind of felt like the first time I built an app with React. Finally I had a structure and a language for composing my marketing workflows and sharing them with clients without copying and pasting prompts around.">
+        <h2>Skills gave me a shape for repeatable judgment</h2>
+        <p>Finally, a way to package how I work.</p>
+      </section>
+
+      <section class="slide" id="slide-4" data-tone="blue" data-notes="First I want to give a quick refresher on what agent skills are. They're a set of reusable instructions that encode your taste and judgment for the model. So often I see people cargo culting other people's skills and I think they're missing the point. Good skills are customized to you and your business.">
+        <p class="eyebrow">Skills 101</p>
+        <h2>Skills</h2>
+        <div class="stack">
+          <div>Reusable instructions</div>
+          <div>Progressive disclosure</div>
+          <div>Taste and judgment for the model</div>
+        </div>
+      </section>
+
+      <section class="slide" id="slide-5" data-layout="continuum" data-notes="Most skills you see people sharing today are user-invoked. They might use them only a few times a week, so maybe it's not as important that they're tested and reliable. A few harness-specific skills you may have tried are">
+        <p class="eyebrow">Skills 101</p>
+        <h2>User vs. model-invoked skills</h2>
+        <div class="stack">
+          <div><strong>User-invoked</strong> <code>/plan</code></div>
+          <div><strong>Mostly user-invoked</strong> <code>/goal</code></div>
+          <div><strong>Mostly model-invoked</strong> <code>/compact</code></div>
+          <div><strong>Fully model-invoked</strong> <code>today's talk</code></div>
+        </div>
+      </section>
+
+      <section class="slide" id="slide-6" data-tone="green" data-layout="split-list" data-notes="I do not want to overclaim the component analogy, but it helps people understand the direction. Skills are becoming reusable pieces of agent behavior that teams can own, version, compose, and improve.">
+        <h2>Skills &lt;&gt; Components</h2>
+        <div class="stack">
+          <div>Reusable</div>
+          <div>Composable</div>
+          <div>Shared across teams</div>
+          <div>Portable across agents</div>
+        </div>
+      </section>
+
+      <section class="slide" id="slide-7" data-layout="contract-sandwich" data-notes="This is the portable shape. The domain can be lead qualification, incident response, customer escalation, or code review. The shared thing is a queue where the agent needs to make a judgment and return something structured.">
+        <p class="eyebrow">Pattern</p>
+        <h2>The skill sandwich</h2>
+        <div class="stack">
+          <div><strong>Inputs</strong> Evidence the agent can cite</div>
+          <div><strong>Judgment</strong> The call it makes</div>
+          <div><strong>Output</strong> Contract another system can trust</div>
+        </div>
+        <figure class="artifact sandwich-visual"><img src="assets/pastrami-sandwich-cutout.png" alt="Annotated pastrami sandwich" />
+          <span class="sandwich-callout sandwich-callout-input"><strong>Inputs</strong><em>evidence</em></span>
+          <span class="sandwich-callout sandwich-callout-judgment"><strong>Judgment</strong><em>the call</em></span>
+          <span class="sandwich-callout sandwich-callout-output"><strong>Output</strong><em>contract</em></span></figure>
+      </section>
+
+      <section class="slide" id="slide-8" data-layout="contract" data-notes="Lead qualification is my concrete example because this is the workflow I have actually run at scale. I should be explicit that the pattern is not lead-specific.">
+        <p class="eyebrow">Pattern</p>
+        <h2>Lead qualification</h2>
+        <div class="stack">
+          <div><strong>Inputs</strong> Social, product, company signals</div>
+          <div><strong>Judgment</strong> Fit, exclusion, confidence</div>
+          <div><strong>Output</strong> Evidence + next step</div>
+        </div>
+      </section>
+
+      <section class="slide" id="slide-9" data-layout="contract" data-notes="You can abstract this pattern to many other types of skills that require judgment to product a priority queue, like incident triage.">
+        <p class="eyebrow">Pattern</p>
+        <h2>Incident triage</h2>
+        <div class="stack">
+          <div><strong>Inputs</strong> Alert, logs, runbook, ownership</div>
+          <div><strong>Judgment</strong> Severity, blast radius, owner</div>
+          <div><strong>Output</strong> Route + next step</div>
+        </div>
+      </section>
+
+      <section class="slide" id="slide-10" data-layout="contract" data-notes="Customer escalation is another one. Tickets and account context in -&gt; Policy and judgment on urgency -&gt; Route it to the next layer in your system">
+        <p class="eyebrow">Pattern</p>
+        <h2>Customer escalation</h2>
+        <div class="stack">
+          <div><strong>Inputs</strong> Ticket, account, history</div>
+          <div><strong>Judgment</strong> Urgency, risk, missing info</div>
+          <div><strong>Output</strong> Route + next step</div>
+        </div>
+      </section>
+
+      <section class="slide" id="slide-11" data-tone="blue" data-layout="clay-artifact" data-notes="Most of the skills you see are actually big giant prompts. Before my marketing agent was a thing, I built lead scoring for my clients in Clay. There would be weird edge cases and questions from clients about why this lead that I couldn't always answer because the prompt had a lot of branching logic in prose that was impossible to test.">
+        <p class="eyebrow">What not to do</p>
+        <h2>Skillslop</h2>
+        <p>2,000+ line SKILL.md is just a giant prompt</p>
+        <figure class="artifact clay-mess">
+            <img src="assets/kite-ui-dump-redacted.png" alt="Redacted Clay lead classification table" />
+        </figure>
+      </section>
+
+      <section class="slide" id="slide-12" data-tone="green" data-notes="First you want to break your skills into sub-workflows. For lead scoring, maybe you have one for handling exclusions. Or maybe in the case of a bug report, you have different policies for handling bugs from contributors vs. users. Whatever it is, you'll want to keep your SKILL.md short and link out to reference documentation or example schemas in references/.">
+        <p class="eyebrow">Best Practices</p>
+        <h2>1. De-slop your skills</h2>
+        <div class="stack">
+          <div><code>SKILL.md</code>: trigger + routing</div>
+          <div><code>references/</code>: specs and examples</div>
+          <div><code>scripts/</code>: deterministic checks</div>
+          <div><code>evals/</code>: cases that should not regress</div>
+        </div>
+      </section>
+
+      <section class="slide" id="slide-13" data-layout="code" data-notes="This skill runs on 100,000 records a week, so the output must be consistent. I like grading high, med, low over a numerical score. Codex will give you skills closer to this style than Claude.">
+        <p class="eyebrow">Best Practices</p>
+        <h2>2. Use output schemas</h2>
+        <pre data-lang="json"><code>&quot;outputs&quot;: {
+  &quot;account_fit&quot;: [&quot;high&quot;, &quot;medium&quot;, &quot;low&quot;],
+  &quot;person_fit&quot;: [&quot;high&quot;, &quot;medium&quot;, &quot;low&quot;],
+  &quot;tier&quot;: [0, 1, 2, 3],
+  &quot;confidence&quot;: [&quot;high&quot;, &quot;medium&quot;, &quot;low&quot;]
+},
+&quot;required_output_fields&quot;: [
+  &quot;account_fit&quot;,
+  &quot;person_fit&quot;,
+  &quot;tier&quot;,
+  &quot;confidence&quot;,
+  &quot;reasons&quot;,
+  &quot;exclusions_matched&quot;
+],</code></pre>
+      </section>
+
+      <section class="slide" id="slide-14" data-layout="code" data-notes="Each skill's description is loaded into context and the model uses that to decide when to invoke it. I like to use &quot;JTBD&quot; verbs and talk about when to run the skill, like before sending Slack alerts or exporting to a CRM. There's also a Slack bot component of my agent, I had to do a bit of work testing different descriptions and mapping those to user intent in order to get them to trigger reliably.">
+        <p class="eyebrow">Best Practices</p>
+        <h2>3. Use verbs in trigger descriptions</h2>
+        <pre data-lang="md"><code>Bad:
+description: ICP fit skill for people and accounts
+
+Better:
+description: Score enriched leads, check fit and exclusions,
+and prioritize before outbound, Slack alerts, or CRM export.</code></pre>
+      </section>
+
+      <section class="slide" id="slide-15" data-tone="blue" data-notes="Start small, you can get pretty far with 5 evals to start.">
+        <p class="eyebrow">Testing skills</p>
+        <h2>Evals make skills real</h2>
+        <div class="stack">
+          <div>Trigger: did the model invoke the skill?</div>
+          <div>Shape: can code parse the output?</div>
+          <div>Judgment: does it match hand review?</div>
+          <div>Cost: did we load too much context?</div>
+        </div>
+      </section>
+
+      <section class="slide" id="slide-16" data-tone="blue" data-notes="Quality validators are the bridge from abstract evals to the demo. Keep them specific, boring, and testable. Did the skill respect my exclusion? If there is a next action like adding to an outbound campaign, was it blocked for tier 0 leads? Were leads with missing evidence handled as low confidence?">
+        <p class="eyebrow">Testing skills</p>
+        <h2>Start with 3-5 boring quality validators</h2>
+        <div class="stack">
+          <div>Evidence required</div>
+          <div>Low confidence handled</div>
+          <div>Exclusions respected</div>
+          <div>Unsafe actions blocked</div>
+        </div>
+      </section>
+
+      <section class="slide" id="slide-17" data-notes="I ran a little experiment using our attendee list for this meetup and an adapted version of my lead scoring skill for Kite. First, a big skill with 1000+ lines, then a slim &quot;sandwich&quot; skill with a ICP spec, a schema, and checks.">
+        <p class="eyebrow">Testing skills</p>
+        <h2>Triaging meetup attendees</h2>
+        <div class="stack">
+          <div>Big skill: one giant SKILL.md</div>
+          <div>Thin skill: context pointers, schema, checks</div>
+        </div>
+      </section>
+
+      <section class="slide" id="slide-18" data-tone="green" data-layout="benchmark" data-notes="This is the first half of the production question: not whether the model can produce a plausible answer once, but how the distribution changes when the skill has less prose and a clearer contract. Generally I want fewer leads scored">
+        <p class="eyebrow">Benchmark</p>
+        <h2>What survives production?</h2>
+        <table class="benchmark-table">
+          <thead><tr><th>Skill</th><th>Tokens</th><th>Rows</th><th>Tier 1</th><th>Tier 2</th><th>Tier 3</th><th>Tier 0</th></tr></thead>
+          <tbody>
+          <tr><td>thin skills</td><td class="metric">2,603</td><td class="metric">114</td><td class="metric">35 (31%)</td><td class="metric">14 (12%)</td><td class="metric">2 (2%)</td><td class="metric">63 (55%)</td></tr>
+          <tr><td>thick skills</td><td class="metric">7,001</td><td class="metric">114</td><td class="metric">38 (33%)</td><td class="metric">16 (14%)</td><td class="metric">6 (5%)</td><td class="metric">54 (47%)</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="slide" id="slide-19" data-tone="green" data-layout="benchmark" data-notes="This is the second half: the production-shaped skill has to preserve evidence, uncertainty, exclusions, and the output contract. A thick skill can look helpful while violating the boundaries another system depends on.">
+        <p class="eyebrow">Benchmark</p>
+        <h2>What survives production?</h2>
+        <table class="benchmark-table">
+          <thead><tr><th>Skill</th><th>Evidence required</th><th>Low confidence handled</th><th>Exclusions respected</th><th>Output contract pure</th><th>Problems</th></tr></thead>
+          <tbody>
+          <tr><td>thin skills</td><td class="metric pass">pass</td><td class="metric pass">pass</td><td class="metric pass">pass</td><td class="metric pass">pass</td><td class="metric">0</td></tr>
+          <tr><td>thick skills</td><td class="metric pass">pass</td><td class="metric fail">fail</td><td class="metric fail">fail</td><td class="metric fail">fail</td><td class="metric">110</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="slide" id="slide-20" data-tone="green" data-notes="I want to go back to my formula from the beginning. To get to this higher level of AI enlightment with &quot;loop engineering&quot; and removing yourself from invoking skills manually and checking your agents, I think it's going to be important to master building agent-invoked skills. The smallest thing you can do today is take one of your skills, add some structured outputs and a few test cases, then iterate and improve.">
+        <p class="eyebrow">Takeaway</p>
+        <h2>Skills That Survive Production</h2>
+        <p>Good output = judgment + contract</p>
+      </section>
+
+      <section class="slide" id="slide-21" data-layout="thanks" data-notes="Thank you so much, if you scan the QR code you have access to the example ICP skill that you can adapt for your business. Make sure you customize it by adding in examples of your customers and what tier 1/tier 2/tier 3 means in the context of your GTM.">
+        <h2>Thank you!!</h2>
+        <p>Scan the QR code for my slides + skills. DM me with questions anytime!</p>
+        <figure class="artifact"><img src="assets/kite-links-qr.svg" alt="QR code for https://kiteand.co/links" /></figure>
+      </section>
+    </main>
+      <footer class="chrome">
+        <div class="footer-brand">
+          <div class="footer-name">@peggyrayzis</div>
+          <div class="qr-slot"><img src="assets/kite-links-qr.svg" alt="QR code for kiteand.co/links" /></div>
+        </div>
+        <div class="footer-progress">
+          <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+          <span id="counter">1 / 21</span>
+        </div>
+        <div class="footer-actions">
+          <div class="controls" aria-label="Slide controls">
+            <button type="button" id="prev" aria-label="Previous slide">‹</button>
+            <button type="button" id="toggleNotes" aria-label="Toggle speaker notes">N</button>
+            <button type="button" id="next" aria-label="Next slide">›</button>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <aside class="notes" id="notes" aria-label="Speaker notes">
+      <h3>Speaker notes</h3>
+      <p id="notesText"></p>
+    </aside>
+    <script>
+      const stage = document.getElementById("stage");
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const notes = document.getElementById("notes");
+      const notesText = document.getElementById("notesText");
+      const counter = document.getElementById("counter");
+      const progress = document.getElementById("progress");
+      let index = 0;
+
+      function fitStage() {
+        const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+        stage.style.setProperty("--stage-scale", String(scale));
+      }
+
+      function showSlide(nextIndex) {
+        index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+        slides.forEach((slide, i) => {
+          slide.classList.toggle("active", i === index);
+        });
+        counter.textContent = `${index + 1} / ${slides.length}`;
+        progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+        notesText.textContent = slides[index].dataset.notes || "";
+        const nextHash = `slide-${index + 1}`;
+        if (window.location.hash.slice(1) !== nextHash) {
+          window.location.hash = nextHash;
+        }
+      }
+
+      function go(delta) {
+        showSlide(index + delta);
+      }
+
+      function showHashSlide() {
+        const match = window.location.hash.match(/slide-(\d+)/);
+        if (match) {
+          showSlide(Number(match[1]) - 1);
+        }
+      }
+
+      document.getElementById("prev").addEventListener("click", () => go(-1));
+      document.getElementById("next").addEventListener("click", () => go(1));
+      document.getElementById("toggleNotes").addEventListener("click", () => {
+        notes.classList.toggle("open");
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowRight" || event.key === " ") {
+          event.preventDefault();
+          go(1);
+        }
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          go(-1);
+        }
+        if (event.key.toLowerCase() === "n") {
+          notes.classList.toggle("open");
+        }
+        if (event.key === "Home") {
+          showSlide(0);
+        }
+        if (event.key === "End") {
+          showSlide(slides.length - 1);
+        }
+      });
+
+      window.addEventListener("resize", fitStage);
+      window.addEventListener("hashchange", showHashSlide);
+      window.showSlide = showSlide;
+      fitStage();
+
+      if (window.location.hash) {
+        showHashSlide();
+      } else {
+        showSlide(0);
+      }
+    </script>
+  </body>
+</html>

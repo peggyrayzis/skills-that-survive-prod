@@ -1,15 +1,32 @@
-# Production Skills Talk
+# Slides That Survive Production
 
-Editable HTML slide deck for the Resend meetup talk.
+My slides for the Resend meetup on 7/1/26.
+
+## Links
+
+- [Skills Docs](https://agentskills.io/)
+- [How Warp builds model-invoked skills](https://www.youtube.com/watch?v=jcfDKXc7Zxg)
+- [Connect on LinkedIn](https://www.linkedin.com/in/peggyrayzis/)
+- [Connect on X](https://x.com/peggyrayzis)
+- [Join the Kite waitlist](https://kiteand.co/)
 
 ## Files
 
 - `slides.md` is the source of truth for the deck.
-- `skills-that-survive-production.html` is the rendered deck.
-- `render-slides.cjs` rebuilds the HTML from `slides.md`.
-- `slide-remote-server.cjs` serves the audience deck and phone presenter controls.
+- `skills/icp` is an example ICP skill you can adapt to your business.
 
-## Commands
+## ICP Skill
+
+The public skill example lives in `skills/icp/`. It shows a compact production-style ICP skill with the scoring contract, references, and eval definitions, without attendee data or generated comparison outputs. You can use it to define your own ICP skill.
+
+## Agent Frameworks Built On Skills
+
+My Kite agent is a fork of Pi, but there are a few other agent frameworks that use skills as a first-class application primitive:
+
+- [Flue](https://flueframework.com/)
+- [Eve](https://vercel.com/eve)
+
+## Slide Commands
 
 Render after editing `slides.md`:
 
