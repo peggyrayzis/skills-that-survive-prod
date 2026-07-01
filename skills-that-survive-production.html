@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Skills That Survive Production</title>
+    <style>
+      :root {
+        --ink: #101114;
+        --muted: #666b76;
+        --paper: #f7f4ef;
+        --panel: #ffffff;
+        --line: #d9d2c6;
+        --accent: #e04b2f;
+        --accent-2: #176b58;
+        --accent-3: #225f9d;
+        --shadow: 0 24px 80px rgba(16, 17, 20, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        overflow: hidden;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .deck {
+        height: 100%;
+        width: 100%;
+        display: grid;
+        place-items: center;
+        padding: 28px;
+      }
+
+      .slide {
+        display: none;
+        width: min(1180px, 100%);
+        height: min(700px, calc(100vh - 112px));
+        min-height: 560px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        padding: 64px 72px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .slide.active {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .slide::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-top: 8px solid var(--accent);
+        pointer-events: none;
+      }
+
+      .slide[data-tone="green"]::before {
+        border-top-color: var(--accent-2);
+      }
+
+      .slide[data-tone="blue"]::before {
+        border-top-color: var(--accent-3);
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        font-size: 18px;
+        font-weight: 760;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        margin: 0 0 26px;
+      }
+
+      .slide[data-tone="green"] .eyebrow {
+        color: var(--accent-2);
+      }
+
+      .slide[data-tone="blue"] .eyebrow {
+        color: var(--accent-3);
+      }
+
+      h1,
+      h2 {
+        letter-spacing: 0;
+        margin: 0;
+        line-height: 0.96;
+        max-width: 980px;
+      }
+
+      h1 {
+        font-size: clamp(56px, 8vw, 108px);
+      }
+
+      h2 {
+        font-size: clamp(44px, 6vw, 78px);
+      }
+
+      p {
+        font-size: clamp(28px, 3vw, 44px);
+        line-height: 1.1;
+        max-width: 920px;
+        margin: 30px 0 0;
+      }
+
+      .small {
+        font-size: clamp(22px, 2vw, 30px);
+        color: var(--muted);
+        line-height: 1.25;
+      }
+
+      .big-line {
+        font-size: clamp(40px, 5vw, 76px);
+        line-height: 1;
+        font-weight: 800;
+        max-width: 960px;
+      }
+
+      .stack {
+        display: grid;
+        gap: 18px;
+        margin-top: 36px;
+        max-width: 960px;
+      }
+
+      .stack div {
+        font-size: clamp(30px, 3.4vw, 48px);
+        line-height: 1.05;
+        font-weight: 720;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 42px;
+      }
+
+      .tile {
+        border: 1px solid var(--line);
+        padding: 24px;
+        min-height: 160px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .tile strong {
+        font-size: 28px;
+      }
+
+      .tile span {
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1.25;
+        margin-top: 18px;
+      }
+
+      pre {
+        margin: 34px 0 0;
+        padding: 28px;
+        background: #121417;
+        color: #f6f2ea;
+        border-radius: 0;
+        font-size: clamp(17px, 1.65vw, 24px);
+        line-height: 1.35;
+        overflow: hidden;
+        max-width: 980px;
+      }
+
+      code {
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      }
+
+      .table {
+        margin-top: 34px;
+        width: min(980px, 100%);
+        border-collapse: collapse;
+        font-size: clamp(18px, 2vw, 27px);
+      }
+
+      .table th,
+      .table td {
+        border-bottom: 1px solid var(--line);
+        padding: 16px 14px;
+        text-align: left;
+      }
+
+      .table th {
+        color: var(--muted);
+        font-weight: 680;
+      }
+
+      .table .bad {
+        color: var(--accent);
+        font-weight: 760;
+      }
+
+      .table .good {
+        color: var(--accent-2);
+        font-weight: 760;
+      }
+
+      .chrome {
+        position: fixed;
+        left: 28px;
+        right: 28px;
+        bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 14px;
+        pointer-events: none;
+      }
+
+      .controls {
+        pointer-events: auto;
+        display: flex;
+        gap: 8px;
+      }
+
+      .controls button {
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      .notes {
+        position: fixed;
+        top: 28px;
+        right: 28px;
+        width: min(420px, calc(100vw - 56px));
+        max-height: calc(100vh - 96px);
+        background: rgba(255, 255, 255, 0.97);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        padding: 20px;
+        overflow: auto;
+        display: none;
+      }
+
+      .notes.open {
+        display: block;
+      }
+
+      .notes h3 {
+        margin: 0 0 12px;
+        font-size: 15px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0;
+      }
+
+      .notes p {
+        margin: 0;
+        font-size: 17px;
+        line-height: 1.45;
+      }
+
+      .notes p + p {
+        margin-top: 12px;
+      }
+
+      .progress {
+        width: 170px;
+        height: 4px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .progress span {
+        display: block;
+        height: 100%;
+        background: var(--ink);
+        width: 0%;
+      }
+
+      @media (max-width: 760px) {
+        body {
+          overflow: auto;
+        }
+
+        .deck {
+          padding: 16px;
+          min-height: 100%;
+        }
+
+        .slide {
+          height: auto;
+          min-height: calc(100vh - 86px);
+          padding: 46px 28px;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .chrome {
+          left: 16px;
+          right: 16px;
+          bottom: 12px;
+        }
+      }
+
+      @media print {
+        body {
+          overflow: visible;
+          background: white;
+        }
+
+        .deck {
+          display: block;
+          padding: 0;
+        }
+
+        .slide,
+        .slide.active {
+          display: flex;
+          page-break-after: always;
+          width: 100vw;
+          height: 100vh;
+          box-shadow: none;
+          border: 0;
+        }
+
+        .chrome,
+        .notes {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="deck" aria-live="polite">
+      <section class="slide active" data-notes="blah">
+        <h1>Skills That Survive Production</h1>
+        <p>Good skill = judgment + contract</p>
+      </section>
+
+      <section class="slide" data-notes="blah">
+        <h2>@peggyrayzis</h2>
+        <div class="stack">
+          <div>scale.dev: Launches/GTM for devtools/AI startups like Render, Imbue, InsForge</div>
+          <div>Engineer -&gt; dev marketing at Apollo GraphQL for 7 years</div>
+          <div>Now I'm building Kite, the agent-native Marketo built on skills</div>
+          <div>I live in Jersey City, home of the best pizza in NYC</div>
+        </div>
+      </section>
+
+      <section class="slide" data-tone="blue" data-notes="blah">
+        <p class="eyebrow">Skills 101</p>
+        <h2>How do skills work?</h2>
+        <h2>Skills are reusable instructions for the LLM, progressively disclosed. They help LLMs understand your taste and judgment.</h2>
+        <p>&lt;!-- eyebrow: Skills 101 notes: blah --&gt;</p>
+        <h2>User vs. model-invoked skills</h2>
+        <div class="stack">
+          <div>Most skills are user-invoked (ex: /plan, /frontend-design)</div>
+          <div>Some are both (/goal, /compact)</div>
+          <div>Writing good model-invoked skills is hard</div>
+        </div>
+      </section>
+
+      <section class="slide" data-tone="green" data-notes="blah">
+        <h2>Skills as components</h2>
+        <div class="stack">
+          <div>Flue (creators of Astro): https://flueframework.com/</div>
+          <div>Eve (Vercel): https://eve.dev/</div>
+          <div>Skills over MCP: https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2640</div>
+        </div>
+      </section>
+
+      <section class="slide" data-notes="This should be blunt. The hard part was not enrichment. The hard part was judgment. I should say I do not want fake numeric scores here.">
+        <p class="eyebrow">The actual hard part</p>
+        <h2>The skills sandwich</h2>
+        <p>The problem was judgment.</p>
+      </section>
+
+      <section class="slide" data-tone="blue" data-notes="This is the hot take. Keep it sharp. Do not over-explain it yet. The next slide gives the alternative shape.">
+        <p class="eyebrow">Hot take</p>
+        <h2>Most skills are mega-prompts in Markdown.</h2>
+        <p>Same mess. New folder.</p>
+      </section>
+
+      <section class="slide" data-tone="green" data-notes="This is the core thesis slide. I can use the plain-language line first, then the production line. This makes it readable to founders and technical enough for engineers.">
+        <p class="eyebrow">The better shape</p>
+        <h2>Skills teach the model what good looks like.</h2>
+        <div class="stack">
+          <div>Skills: judgment and policy</div>
+          <div>Tools: fetch, write, send, act</div>
+          <div>Code: boundaries and enforcement</div>
+        </div>
+      </section>
+
+      <section class="slide" data-notes="This is the practical checklist. Do not make it feel like a tutorial. The point is an inspection rubric: if I look at your skill, can I tell whether it is production-shaped?">
+        <p class="eyebrow">Best practices</p>
+        <h2>Small at the top. Specific underneath.</h2>
+        <div class="stack">
+          <div>Thin <code>SKILL.md</code></div>
+          <div>References, examples, schemas</div>
+          <div>Scripts, evals, shared repo</div>
+        </div>
+      </section>
+
+      <section class="slide" data-tone="blue" data-notes="This is the pivot into the demo. Important: the demo is not the lead skill working. The demo is how to eval whether a judgment skill is production-safe.">
+        <p class="eyebrow">Demo</p>
+        <h2>How do you eval a judgment skill?</h2>
+        <p>Same task. Two skill shapes. One hand-reviewed baseline.</p>
+      </section>
+
+      <section class="slide" data-notes="This slide makes the contrast clear. The three columns should be the whole demo structure: bad/common shape, production shape, human baseline.">
+        <p class="eyebrow">The comparison</p>
+        <h2>Attendee triage, three ways</h2>
+        <div class="stack">
+          <div>Big skill: one giant Markdown file</div>
+          <div>Split skill: thin skill, spec, schema, checks</div>
+          <div>Hand review: what I wanted the agent to do</div>
+        </div>
+      </section>
+
+      <section class="slide" data-tone="green" data-notes="This can be a real terminal output later. For now these are placeholder numbers. The dimensions are what matter: not model intelligence, but shape, evidence, uncertainty, unsafe actions.">
+        <p class="eyebrow">Benchmark</p>
+        <h2>What survives production?</h2>
+        <pre><code>Eval dimension          Big skill   Split skill
+Schema valid            74%         100%
+Evidence present        61%         96%
+Uncertainty handled     52%         91%
+Unsafe action blocked   3           0</code></pre>
+      </section>
+
+      <section class="slide" data-notes="This is the case study moment. Pick one failure where the big skill sounds reasonable but is unsafe. The split skill is not smarter, it stops better.">
+        <p class="eyebrow">The interesting failure</p>
+        <h2>The big skill guessed.</h2>
+        <p>The production-shaped skill said: enrich more.</p>
+      </section>
+
+      <section class="slide" data-tone="blue" data-notes="This should show the boring structured JSON. Boring is the point. Another system can trust it.">
+        <p class="eyebrow">Output shape</p>
+        <h2>The system needs a receipt.</h2>
+        <pre><code>{
+  &quot;segment&quot;: &quot;engineer_power_user&quot;,
+  &quot;fit&quot;: &quot;medium&quot;,
+  &quot;confidence&quot;: &quot;low&quot;,
+  &quot;action&quot;: &quot;enrich_more&quot;,
+  &quot;evidence_used&quot;: [&quot;developer tools&quot;, &quot;AI workflow mention&quot;],
+  &quot;unresolved_questions&quot;: [&quot;current role unclear&quot;],
+  &quot;review_required&quot;: false
+}</code></pre>
+      </section>
+
+      <section class="slide" data-tone="green" data-notes="This makes the talk more generally useful to engineers. The demo is lead-ish, but the pattern works across judgment skills.">
+        <p class="eyebrow">This is not about leads</p>
+        <h2>The pattern is portable.</h2>
+        <div class="stack">
+          <div>Bug triage -&gt; owner, severity, next step</div>
+          <div>Support routing -&gt; urgency, missing info</div>
+          <div>Code review -&gt; risk, evidence, patch path</div>
+        </div>
+      </section>
+
+      <section class="slide" data-notes="This is the central repo point. It should feel like an engineering practice, not a Kite feature.">
+        <p class="eyebrow">Team practice</p>
+        <h2>Your skills should not live on someone's laptop.</h2>
+        <p>Company judgment belongs in a repo.</p>
+      </section>
+
+      <section class="slide" data-tone="blue" data-notes="This is the repo-as-memory point. Mention git log as eval signal for improving the skill creator, but do not make it the main demo.">
+        <p class="eyebrow">Why the repo matters</p>
+        <h2>Your skills repo is company memory.</h2>
+        <div class="stack">
+          <div>Review history</div>
+          <div>Examples that compound</div>
+          <div>Better skill creation over time</div>
+        </div>
+      </section>
+
+      <section class="slide" data-tone="green" data-notes="End with the practical lesson, not a product pitch. Kite can be a small footnote in the repo line.">
+        <p class="eyebrow">Takeaway</p>
+        <h2>Do not make the prompt longer.</h2>
+        <p>Make the judgment testable.</p>
+      </section>
+
+      <section class="slide" data-notes="CTA should be a useful artifact. Kite waitlist is allowed, but it should not be the emotional close.">
+        <p class="eyebrow">Steal the pattern</p>
+        <h2>Repo has the talk, skill builder, templates, and examples.</h2>
+        <p>Kite waitlist is there too, if this is your problem.</p>
+      </section>
+    </main>
+
+    <aside class="notes" id="notes" aria-label="Speaker notes">
+      <h3>Speaker notes</h3>
+      <p id="notesText"></p>
+    </aside>
+
+    <footer class="chrome">
+      <div>
+        <span id="counter">1 / 18</span>
+      </div>
+      <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+      <div class="controls" aria-label="Slide controls">
+        <button type="button" id="prev" aria-label="Previous slide">‹</button>
+        <button type="button" id="toggleNotes" aria-label="Toggle speaker notes">N</button>
+        <button type="button" id="next" aria-label="Next slide">›</button>
+      </div>
+    </footer>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const notes = document.getElementById("notes");
+      const notesText = document.getElementById("notesText");
+      const counter = document.getElementById("counter");
+      const progress = document.getElementById("progress");
+      let index = 0;
+
+      function showSlide(nextIndex) {
+        index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+        slides.forEach((slide, i) => {
+          slide.classList.toggle("active", i === index);
+        });
+        counter.textContent = `${index + 1} / ${slides.length}`;
+        progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+        notesText.textContent = slides[index].dataset.notes || "";
+        window.location.hash = `slide-${index + 1}`;
+      }
+
+      function go(delta) {
+        showSlide(index + delta);
+      }
+
+      document.getElementById("prev").addEventListener("click", () => go(-1));
+      document.getElementById("next").addEventListener("click", () => go(1));
+      document.getElementById("toggleNotes").addEventListener("click", () => {
+        notes.classList.toggle("open");
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowRight" || event.key === " ") {
+          event.preventDefault();
+          go(1);
+        }
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          go(-1);
+        }
+        if (event.key.toLowerCase() === "n") {
+          notes.classList.toggle("open");
+        }
+        if (event.key === "Home") {
+          showSlide(0);
+        }
+        if (event.key === "End") {
+          showSlide(slides.length - 1);
+        }
+      });
+
+      const match = window.location.hash.match(/slide-(\d+)/);
+      if (match) {
+        showSlide(Number(match[1]) - 1);
+      } else {
+        showSlide(0);
+      }
+    </script>
+    <script>
+      (function () {
+        if (window.location.protocol !== "file:") return;
+
+        const remoteOrigin =
+          localStorage.getItem("slideRemoteOrigin") ||
+          "https://titanium-startup-oliver-baseball.trycloudflare.com";
+        let lastRemoteIndex = null;
+        let lastHash = window.location.hash;
+        let busy = false;
+
+        async function pollRemoteState() {
+          if (busy) return;
+          busy = true;
+          try {
+            const response = await fetch(remoteOrigin + "/api/state", {
+              cache: "no-store",
+            });
+            if (!response.ok) return;
+            const state = await response.json();
+            if (!Number.isFinite(state.index)) return;
+            if (state.index === lastRemoteIndex) return;
+            lastRemoteIndex = state.index;
+            showSlide(state.index);
+          } catch (_) {
+          } finally {
+            busy = false;
+          }
+        }
+
+        function syncLocalHashToRemote() {
+          if (window.location.hash === lastHash) return;
+          lastHash = window.location.hash;
+          const match = window.location.hash.match(/slide-(\d+)/);
+          if (!match) return;
+          const index = Number(match[1]) - 1;
+          if (!Number.isFinite(index)) return;
+          fetch(remoteOrigin + "/api/goto", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ index, source: "file-deck" }),
+          }).catch(function () {});
+        }
+
+        setInterval(pollRemoteState, 500);
+        setInterval(syncLocalHashToRemote, 250);
+        pollRemoteState();
+      })();
+    </script>
+  </body>
+</html>

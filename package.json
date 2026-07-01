@@ -1,0 +1,12 @@
+{
+  "name": "production-skills-talk",
+  "private": true,
+  "version": "0.1.0",
+  "type": "commonjs",
+  "scripts": {
+    "render": "node render-slides.cjs",
+    "serve": "node slide-remote-server.cjs",
+    "dev": "WATCH_SLIDES=1 node slide-remote-server.cjs",
+    "tunnel": "cloudflared tunnel --config cloudflared-empty.yml --protocol http2 --url http://127.0.0.1:6174 --http-host-header localhost:6174"
+  }
+}
